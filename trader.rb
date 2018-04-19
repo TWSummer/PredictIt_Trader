@@ -12,6 +12,10 @@ class Trader
     login
     navigate_to_market
     @market_values.update_prices
+    while true
+      navigate_to_market
+      @market_values.update_prices
+    end
   end
 
   private

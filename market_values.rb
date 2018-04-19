@@ -6,6 +6,8 @@ class MarketValues
   def update_prices
     @prev_prices = @cur_prices
     update_cur_prices
+    p @cur_prices
+    p @prev_prices
   end
 
   private
@@ -15,7 +17,6 @@ class MarketValues
     update_buy_prices
     update_latest
     update_holdings
-    p @cur_prices
   end
 
   def update_buy_prices
