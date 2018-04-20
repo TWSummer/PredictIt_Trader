@@ -18,7 +18,7 @@ class Trader
       action = @market_values.suggest_action
       p action
       perform_action(action)
-      sleep(20)
+      sleep(5)
     end
   end
 
@@ -30,9 +30,8 @@ class Trader
   end
 
   def buy(action)
-    index = action[:idx] * 2
-    index += 1 if action[:shares] == :no
-    element = @driver.find_elements(css: '.text-center span a[class*="showPointer"]')[index]
+    col = action[:shares] == :yes ? 3 : 5
+    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx]}) td:nth-of-type(#{col}) span a")[0]
     p element
     element.click
     sleep(1)
@@ -45,7 +44,7 @@ class Trader
     button_id = action[:shares] == :no ? "submitSell" : "submitBuy"
     element = @driver.find_element(id: button_id)
     element.click
-    sleep(1)
+    sleep(100)
     element = @driver.find_elements(css: 'button.btn-success')[0]
     element.click
   end

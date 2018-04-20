@@ -29,7 +29,7 @@ class MarketValues
     best_idx = nil
     @cur_prices["Buy Yes"].each_index do |idx|
       dif = @cur_prices["Buy Yes"][idx] - (100 - @cur_prices["Buy No"][idx])
-      if dif > max_difference
+      if dif > max_difference && !already_offers?(idx)
         max_difference = dif
         best_idx = idx
       end
@@ -93,6 +93,12 @@ class MarketValues
     nil
   end
 
+  def already_offers?(idx)
+    @cur_prices["Shares"][idx] > 0 ||
+    @cur_prices["Buy Offers"][idx] > 0 ||
+    @cur_prices["Sell Offers"][idx] > 0
+  end
+
   def yes_price_total
     @cur_prices["Buy Yes"].reduce(:+)
   end
@@ -113,13 +119,19 @@ class MarketValues
   end
 
   def update_buy_prices
-    elements = @driver.find_elements(css: '.text-center span a[class*="showPointer"]')
+    elements = @driver.find_elements(css: '.text-center span[class*="sharesUp"]')
     elements.each_with_index do |el, idx|
       value = el.attribute("innerText").to_i
       value = 100 if value == 0
       if idx % 2 == 0
         @cur_prices["Buy Yes"] = @cur_prices["Buy Yes"].push(value)
-      else
+      end
+    end
+    elements = @driver.find_elements(css: '.text-center span[class*="sharesDown"]')
+    elements.each_with_index do |el, idx|
+      value = el.attribute("innerText").to_i
+      value = 100 if value == 0
+      if idx % 2 == 0
         @cur_prices["Buy No"] = @cur_prices["Buy No"].push(value)
       end
     end
