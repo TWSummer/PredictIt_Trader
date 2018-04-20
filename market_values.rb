@@ -19,7 +19,7 @@ class MarketValues
     return irrelevant_offer if irrelevant_offer
     return sell_shares if sell_shares
     return buy_shares if buy_shares
-    ["No Action"]
+    { type: "No Action" }
   end
 
   private
@@ -38,30 +38,51 @@ class MarketValues
     puts no_price_total
     if max_difference > PURCHASE_ABOVE_DIFFERENCE
       if yes_price_total < no_price_total
-        return ["buy", "yes", best_idx, @cur_prices["Buy Yes"][idx], 5]
+        return {
+          type: :buy,
+          shares: :yes,
+          idx: best_idx,
+          price: @cur_prices["Buy Yes"][best_idx],
+          quantity: 5
+        }
       else
-        return ["buy", "no", best_idx, @cur_prices["Buy No"][idx], 5]
+        return {
+          type: :buy,
+          shares: :no,
+          idx: best_idx,
+          price: @cur_prices["Buy No"][best_idx],
+          quantity: 5
+        }
       end
     end
     nil
   end
 
   def sell_shares
-    nil
+    return nil
+    { type: :sell}
   end
 
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
         if @offers[idx].price < 100 - @cur_prices["Buy Yes"][idx]
-          return ["cancel", "buy", idx]
+          return {
+            type: :cancel,
+            offer: :buy,
+            idx: idx
+          }
         end
       end
     end
     @cur_prices["Sell Offers"].each_with_index do |quantity, idx|
       if quantity > 0
         if @offers[idx].price > 100 - @cur_prices["Buy No"][idx]
-          return ["cancel", "sell", idx]
+          return {
+            type: :cancel,
+            offer: :sell,
+            idx: idx
+          }
         end
       end
     end
