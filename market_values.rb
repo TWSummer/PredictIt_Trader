@@ -19,6 +19,7 @@ class MarketValues
     return irrelevant_offer if irrelevant_offer
     return sell_shares if sell_shares
     return buy_shares if buy_shares
+    ["No Action"]
   end
 
   private
@@ -27,12 +28,22 @@ class MarketValues
     max_difference = 0
     best_idx = nil
     @cur_prices["Buy Yes"].each_index do |idx|
-      dif = @cur_prices["Buy Yes"][idx] - (1 - @cur_prices["Buy No"][idx])
+      dif = @cur_prices["Buy Yes"][idx] - (100 - @cur_prices["Buy No"][idx])
       if dif > max_difference
         max_difference = dif
         best_idx = idx
       end
     end
+    puts yes_price_total
+    puts no_price_total
+    if max_difference > PURCHASE_ABOVE_DIFFERENCE
+      if yes_price_total < no_price_total
+        return ["buy", "yes", best_idx]
+      else
+        return ["buy", "no", best_idx]
+      end
+    end
+    nil
   end
 
   def sell_shares
@@ -57,8 +68,12 @@ class MarketValues
     nil
   end
 
-  def price_total(str)
-    @cur_prices[str].reduce(:+)
+  def yes_price_total
+    @cur_prices["Buy Yes"].reduce(:+)
+  end
+
+  def no_price_total
+    @cur_prices["Buy No"].reduce { |tot, el| tot + 100 - el }
   end
 
   def update_cur_prices
