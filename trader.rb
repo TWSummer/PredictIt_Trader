@@ -17,10 +17,25 @@ class Trader
       @market_values.update_prices
       action = @market_values.suggest_action
       p action
+      perform_action(action)
+      sleep(2)
     end
   end
 
   private
+
+  def perform_action(action)
+    buy(action) if action[0] == "buy"
+
+  end
+
+  def buy(action)
+    index = action[2] * 2
+    index += 1 if action[1] = "no"
+    element = @driver.find_elements(css: '.text-center span a[class*="showPointer"]')[0]
+    p element
+    element.click
+  end
 
   def login
     @driver.navigate.to "https://www.predictit.org/"
