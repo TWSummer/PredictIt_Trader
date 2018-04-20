@@ -42,6 +42,12 @@ class Trader
     element = @driver.find_element(id: 'PricePerShare')
     3.times { element.send_keys "\ue017" }
     element.send_keys action[:price]
+    button_id = action[:shares] == :no ? "submitSell" : "submitBuy"
+    element = @driver.find_element(id: button_id)
+    element.click
+    sleep(1)
+    element = @driver.find_elements(css: 'button.btn-success')[0]
+    element.click
   end
 
   def login
