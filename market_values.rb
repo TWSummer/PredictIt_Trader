@@ -12,7 +12,6 @@ class MarketValues
     update_cur_prices
     @offers ||= Array.new(@cur_prices.length) { Offer.new(100, 100, 100) }
     p @cur_prices
-    p @prev_prices
   end
 
   def suggest_action
