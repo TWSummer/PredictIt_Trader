@@ -1,9 +1,10 @@
 require "./offer"
 
 class MarketValues
+  PURCHASE_ABOVE_DIFFERENCE = 5
+
   def initialize(driver)
     @driver = driver
-
   end
 
   def update_prices
@@ -16,10 +17,27 @@ class MarketValues
 
   def suggest_action
     return irrelevant_offer if irrelevant_offer
-    p "None yet"
+    return sell_shares if sell_shares
+    return buy_shares if buy_shares
   end
 
   private
+
+  def buy_shares
+    max_difference = 0
+    best_idx = nil
+    @cur_prices["Buy Yes"].each_index do |idx|
+      dif = @cur_prices["Buy Yes"][idx] - (1 - @cur_prices["Buy No"][idx])
+      if dif > max_difference
+        max_difference = dif
+        best_idx = idx
+      end
+    end
+  end
+
+  def sell_shares
+    nil
+  end
 
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
