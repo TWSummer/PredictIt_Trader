@@ -38,6 +38,9 @@ class MarketValues
     puts no_price_total
     if max_difference > PURCHASE_ABOVE_DIFFERENCE
       if yes_price_total < no_price_total
+        @offers[best_idx].price = 100 - @cur_prices["Buy No"][best_idx] + 1
+        @offers[best_idx].min = 100 - @cur_prices["Buy No"][best_idx] + 1
+        @offers[best_idx].max = @cur_prices["Buy Yes"]
         return {
           type: :buy,
           shares: :yes,
@@ -46,6 +49,9 @@ class MarketValues
           quantity: 5
         }
       else
+        @offers[best_idx].price = 100 - @cur_prices["Buy Yes"][best_idx] + 1
+        @offers[best_idx].min = 100 - @cur_prices["Buy Yes"][best_idx] + 1
+        @offers[best_idx].max = @cur_prices["Buy No"]
         return {
           type: :buy,
           shares: :no,
