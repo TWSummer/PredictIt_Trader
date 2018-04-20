@@ -26,13 +26,13 @@ class Trader
 
   def perform_action(action)
     buy(action) if action[:type] == :buy
+    cancel(action) if action[:type] == :cancel
 
   end
 
   def buy(action)
     col = action[:shares] == :yes ? 3 : 5
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx]}) td:nth-of-type(#{col}) span a")[0]
-    p element
     element.click
     sleep(1)
     element = @driver.find_element(id: 'Quantity')
@@ -46,6 +46,12 @@ class Trader
     element.click
     sleep(100)
     element = @driver.find_elements(css: 'button.btn-success')[0]
+    element.click
+  end
+
+  def cancel(action)
+    col = action[:offer] == :buy ? 7 : 8
+    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx]}) td:nth-of-type(#{col}) a")[0]
     element.click
   end
 

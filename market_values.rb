@@ -10,7 +10,7 @@ class MarketValues
   def update_prices
     @prev_prices = @cur_prices
     update_cur_prices
-    @offers ||= Array.new(@cur_prices.length) { Offer.new(0, 0, 0) }
+    @offers ||= Array.new(@cur_prices.length) { Offer.new(100, 100, 100) }
     p @cur_prices
     p @prev_prices
   end
