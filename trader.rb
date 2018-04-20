@@ -15,6 +15,7 @@ class Trader
     while true
       navigate_to_market
       @market_values.update_prices
+      @market_values.suggest_action
     end
   end
 

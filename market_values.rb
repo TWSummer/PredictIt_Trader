@@ -1,16 +1,47 @@
+require "./offer"
+
 class MarketValues
   def initialize(driver)
     @driver = driver
+
   end
 
   def update_prices
     @prev_prices = @cur_prices
     update_cur_prices
+    @offers ||= Array.new(@cur_prices.length) { Offer.new(0, 0, 0) }
     p @cur_prices
     p @prev_prices
   end
 
+  def suggest_action
+    return irrelevant_offer if irrelevant_offer
+    p "None yet"
+  end
+
   private
+
+  def irrelevant_offer
+    @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
+      if quantity > 0
+        if @offers[idx].price < 100 - @cur_prices["Buy Yes"][idx]
+          return ["cancel", "buy", idx]
+        end
+      end
+    end
+    @cur_prices["Sell Offers"].each_with_index do |quantity, idx|
+      if quantity > 0
+        if @offers[idx].price > 100 - @cur_prices["Buy No"][idx]
+          return ["cancel", "sell", idx]
+        end
+      end
+    end
+    nil
+  end
+
+  def price_total(str)
+    @cur_prices[str].reduce(:+)
+  end
 
   def update_cur_prices
     @cur_prices = Hash.new { [] }
