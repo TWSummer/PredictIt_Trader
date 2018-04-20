@@ -32,7 +32,7 @@ class Trader
 
   def buy(action)
     col = action[:shares] == :yes ? 3 : 5
-    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx]}) td:nth-of-type(#{col}) span a")[0]
+    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
     element.click
     sleep(1)
     element = @driver.find_element(id: 'Quantity')
