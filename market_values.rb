@@ -50,7 +50,7 @@ class MarketValues
           type: :buy,
           shares: :no,
           idx: best_idx,
-          price: 100 - @cur_prices["Buy No"][best_idx] + 1,
+          price: 100 - @cur_prices["Buy Yes"][best_idx] + 1,
           quantity: 5
         }
       end
