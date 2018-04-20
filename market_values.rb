@@ -38,9 +38,9 @@ class MarketValues
     puts no_price_total
     if max_difference > PURCHASE_ABOVE_DIFFERENCE
       if yes_price_total < no_price_total
-        return ["buy", "yes", best_idx]
+        return ["buy", "yes", best_idx, @cur_prices["Buy Yes"][idx], 5]
       else
-        return ["buy", "no", best_idx]
+        return ["buy", "no", best_idx, @cur_prices["Buy No"][idx], 5]
       end
     end
     nil

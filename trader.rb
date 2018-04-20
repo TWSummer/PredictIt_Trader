@@ -35,6 +35,8 @@ class Trader
     element = @driver.find_elements(css: '.text-center span a[class*="showPointer"]')[0]
     p element
     element.click
+    sleep(1)
+    element = @driver.find_element(id: 'Quantity')
   end
 
   def login
