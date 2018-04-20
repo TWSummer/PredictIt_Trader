@@ -50,8 +50,10 @@ class Trader
   end
 
   def cancel(action)
-    col = action[:offer] == :buy ? 7 : 8
-    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx]}) td:nth-of-type(#{col}) a")[0]
+    col = action[:offer] == :buy ? 8 : 9
+    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) a")[0]
+    element.click
+    element = @driver.find_elements(css: "a.cancelOrderBook")[0]
     element.click
   end
 
