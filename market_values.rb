@@ -89,7 +89,9 @@ class MarketValues
       if idx % 2 == 0
         @cur_prices["Buy Yes"] = @cur_prices["Buy Yes"].push(el.attribute("innerText").to_i)
       else
-        @cur_prices["Buy No"] = @cur_prices["Buy No"].push(el.attribute("innerText").to_i)
+        value = el.attribute("innerText").to_i
+        value = 100 if value == 0
+        @cur_prices["Buy No"] = @cur_prices["Buy No"].push(value)
       end
     end
   end
