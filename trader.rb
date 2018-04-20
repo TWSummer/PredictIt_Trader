@@ -37,6 +37,9 @@ class Trader
     element.click
     sleep(1)
     element = @driver.find_element(id: 'Quantity')
+    element.send_keys action[:quantity]
+    element = @driver.find_element(id: 'PricePerShare')
+    element.send_keys action[:price]
   end
 
   def login
