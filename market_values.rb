@@ -73,7 +73,11 @@ class MarketValues
   end
 
   def no_price_total
-    @cur_prices["Buy No"].reduce { |tot, el| tot + 100 - el }
+    total = 0
+    @cur_prices["Buy No"].each do |val|
+      total += 100 - val
+    end
+    total
   end
 
   def update_cur_prices
@@ -86,11 +90,11 @@ class MarketValues
   def update_buy_prices
     elements = @driver.find_elements(css: '.text-center span a[class*="showPointer"]')
     elements.each_with_index do |el, idx|
+      value = el.attribute("innerText").to_i
+      value = 100 if value == 0
       if idx % 2 == 0
-        @cur_prices["Buy Yes"] = @cur_prices["Buy Yes"].push(el.attribute("innerText").to_i)
+        @cur_prices["Buy Yes"] = @cur_prices["Buy Yes"].push(value)
       else
-        value = el.attribute("innerText").to_i
-        value = 100 if value == 0
         @cur_prices["Buy No"] = @cur_prices["Buy No"].push(value)
       end
     end
