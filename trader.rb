@@ -37,8 +37,10 @@ class Trader
     element.click
     sleep(1)
     element = @driver.find_element(id: 'Quantity')
+    3.times { element.send_keys "\ue003" }
     element.send_keys action[:quantity]
     element = @driver.find_element(id: 'PricePerShare')
+    3.times { element.send_keys "\ue017" }
     element.send_keys action[:price]
   end
 
