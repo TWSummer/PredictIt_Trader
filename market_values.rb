@@ -64,21 +64,23 @@ class MarketValues
   def sell_shares
     @cur_prices["Shares"].each_with_index do |quantity, idx|
       if quantity > 0
-        if @cur_prices["Buy Yes"] < @offers[idx].max
+        if @cur_prices["Buy Yes"][idx] < @offers[idx].max
           return {
             type: :sell,
             shares: :yes,
             idx: idx,
-            price: @cur_prices["Buy Yes"] - 1
+            price: @cur_prices["Buy Yes"][idx] - 1,
+            quantity: quantity
           }
         end
       elsif quantity < 0
-        if @cur_prices["Buy No"] < @offers[idx].max
+        if @cur_prices["Buy No"][idx] < @offers[idx].max
           return {
             type: :sell,
             shares: :no,
             idx: idx,
-            price: @cur_prices["Buy No"] - 1
+            price: @cur_prices["Buy No"][idx] - 1,
+            quantity: -quantity
           }
         end
       end

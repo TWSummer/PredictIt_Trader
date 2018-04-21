@@ -27,6 +27,7 @@ class Trader
   def perform_action(action)
     buy(action) if action[:type] == :buy
     cancel(action) if action[:type] == :cancel
+    sell(action) if action[:type] == :sell
 
   end
 
@@ -47,6 +48,15 @@ class Trader
     sleep(100)
     element = @driver.find_elements(css: 'button.btn-success')[0]
     element.click
+  end
+
+  def sell(action)
+    col = action[:shares] == :yes ? 4 : 6
+    element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
+    p element
+    element.click
+    sleep(1)
+    sleep(5)
   end
 
   def cancel(action)
