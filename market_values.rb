@@ -64,10 +64,26 @@ class MarketValues
   def sell_shares
     @cur_prices["Shares"].each_with_index do |quantity, idx|
       if quantity > 0
-
+        if @cur_prices["Buy Yes"] < @offers[idx].max
+          return {
+            type: :sell,
+            shares: :yes,
+            idx: idx,
+            price: @cur_prices["Buy Yes"] - 1
+          }
+        end
+      elsif quantity < 0
+        if @cur_prices["Buy No"] < @offers[idx].max
+          return {
+            type: :sell,
+            shares: :no,
+            idx: idx,
+            price: @cur_prices["Buy No"] - 1
+          }
+        end
       end
     end
-    { type: :sell }
+    nil
   end
 
   def irrelevant_offer
