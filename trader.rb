@@ -56,6 +56,8 @@ class Trader
     sleep(1)
     element = @driver.find_elements(css: "a.cancelOrderBook")[0]
     element.click
+    sleep(1)
+    @driver.switch_to.alert.accept
   end
 
   def login

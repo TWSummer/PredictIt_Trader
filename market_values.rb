@@ -62,8 +62,12 @@ class MarketValues
   end
 
   def sell_shares
-    return nil
-    { type: :sell}
+    @cur_prices["Shares"].each_with_index do |quantity, idx|
+      if quantity > 0
+
+      end
+    end
+    { type: :sell }
   end
 
   def irrelevant_offer
@@ -148,6 +152,7 @@ class MarketValues
     elements.each_with_index do |el, idx|
       if idx % 3 == 0
         @cur_prices["Shares"] = @cur_prices["Shares"].push(el.attribute("innerText").to_i)
+        @cur_prices["Shares"][-1] *= -1 if el.attribute("outerHTML").include?("alert-danger")
       elsif idx % 3 == 1
         @cur_prices["Buy Offers"] = @cur_prices["Buy Offers"].push(el.attribute("innerText").to_i)
       else
