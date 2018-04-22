@@ -13,15 +13,15 @@ class Trader
     navigate_to_market
     @market_values.update_prices
     while true
-      begin
+      # begin
         navigate_to_market
         @market_values.update_prices
         action = @market_values.suggest_action
         p action
         perform_action(action)
         sleep(5)
-      rescue ElementNotInteractableError
-      end
+      # rescue
+      # end
     end
   end
 
