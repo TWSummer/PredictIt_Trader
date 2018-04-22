@@ -19,7 +19,7 @@ class Trader
         action = @market_values.suggest_action
         p action
         perform_action(action)
-        sleep(5)
+        sleep(4)
       # rescue
       # end
     end
@@ -37,7 +37,7 @@ class Trader
     col = action[:shares] == :yes ? 3 : 5
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
     element.click
-    sleep(1)
+    sleep(2)
     element = @driver.find_element(id: 'Quantity')
     3.times { element.send_keys "\ue003" }
     element.send_keys action[:quantity]
@@ -79,8 +79,8 @@ class Trader
     col = action[:offer] == :buy ? 8 : 9
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) a")[0]
     element.click
-    sleep(1)
-    element = @driver.find_elements(css: "a.cancelOrderBook")[0]
+    sleep(3)
+    element = @driver.find_elements(css: "#ownershipmodal a.cancelOrderBook")[0]
     element.click
     sleep(1)
     @driver.switch_to.alert.accept

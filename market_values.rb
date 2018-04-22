@@ -99,7 +99,7 @@ class MarketValues
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
-        if @offers[idx].price > 100 - @cur_prices["Buy Yes"][idx]
+        if @offers[idx].price > @cur_prices["Buy No"][idx]
           return {
             type: :cancel,
             offer: :buy,
@@ -110,7 +110,7 @@ class MarketValues
     end
     @cur_prices["Sell Offers"].each_with_index do |quantity, idx|
       if quantity > 0
-        if @offers[idx].price > 100 - @cur_prices["Buy No"][idx]
+        if @offers[idx].price > @cur_prices["Buy Yes"][idx]
           return {
             type: :cancel,
             offer: :sell,
