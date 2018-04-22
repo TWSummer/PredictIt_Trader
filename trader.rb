@@ -13,12 +13,15 @@ class Trader
     navigate_to_market
     @market_values.update_prices
     while true
-      navigate_to_market
-      @market_values.update_prices
-      action = @market_values.suggest_action
-      p action
-      perform_action(action)
-      sleep(5)
+      begin
+        navigate_to_market
+        @market_values.update_prices
+        action = @market_values.suggest_action
+        p action
+        perform_action(action)
+        sleep(5)
+      rescue ElementNotInteractableError
+      end
     end
   end
 
@@ -28,7 +31,6 @@ class Trader
     buy(action) if action[:type] == :buy
     cancel(action) if action[:type] == :cancel
     sell(action) if action[:type] == :sell
-
   end
 
   def buy(action)
@@ -45,7 +47,7 @@ class Trader
     button_id = action[:shares] == :no ? "submitSell" : "submitBuy"
     element = @driver.find_element(id: button_id)
     element.click
-    sleep(100)
+    sleep(1)
     element = @driver.find_elements(css: 'button.btn-success')[0]
     element.click
   end
@@ -53,10 +55,24 @@ class Trader
   def sell(action)
     col = action[:shares] == :yes ? 4 : 6
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
-    p element
     element.click
     sleep(1)
-    sleep(5)
+    complete_purchase(action)
+  end
+
+  def complete_purchase(action)
+    element = @driver.find_element(id: 'Quantity')
+    3.times { element.send_keys "\ue003" }
+    element.send_keys action[:quantity]
+    element = @driver.find_element(id: 'PricePerShare')
+    3.times { element.send_keys "\ue017" }
+    element.send_keys action[:price]
+    button_id = action[:shares] == :no || action[:type] == :sell ? "submitSell" : "submitBuy"
+    element = @driver.find_element(id: button_id)
+    element.click
+    sleep(1)
+    element = @driver.find_elements(css: 'button.btn-success')[0]
+    element.click
   end
 
   def cancel(action)

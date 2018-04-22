@@ -10,7 +10,7 @@ class MarketValues
   def update_prices
     @prev_prices = @cur_prices
     update_cur_prices
-    @offers ||= Array.new(@cur_prices.length) { Offer.new(100, 100, 100) }
+    @offers ||= Array.new(@cur_prices["Buy Yes"].length) { Offer.new(100, 100, 100) }
     p @cur_prices
   end
 
@@ -38,7 +38,8 @@ class MarketValues
     if max_difference > PURCHASE_ABOVE_DIFFERENCE
       if yes_price_total < no_price_total
         price = 100 - @cur_prices["Buy No"][best_idx] + 1
-        @offers[best_idx] = Offer.new(price, price, @cur_prices["Buy Yes"])
+        price = 99 if price == 100
+        @offers[best_idx] = Offer.new(price, price, @cur_prices["Buy Yes"][best_idx])
         return {
           type: :buy,
           shares: :yes,
@@ -48,7 +49,8 @@ class MarketValues
         }
       else
         price = 100 - @cur_prices["Buy Yes"][best_idx] + 1
-        @offers[best_idx] = Offer.new(price, price, @cur_prices["Buy No"])
+        price = 99 if price == 100
+        @offers[best_idx] = Offer.new(price, price, @cur_prices["Buy No"][best_idx])
         return {
           type: :buy,
           shares: :no,
@@ -65,21 +67,27 @@ class MarketValues
     @cur_prices["Shares"].each_with_index do |quantity, idx|
       if quantity > 0
         if @cur_prices["Buy Yes"][idx] < @offers[idx].max
+          price = @cur_prices["Buy Yes"][idx] - 1
+          price = 1 if price == 0
+          @offers[idx] = Offer.new(price, 100 - @cur_prices["Buy No"][idx], price)
           return {
             type: :sell,
             shares: :yes,
             idx: idx,
-            price: @cur_prices["Buy Yes"][idx] - 1,
+            price: price,
             quantity: quantity
           }
         end
       elsif quantity < 0
         if @cur_prices["Buy No"][idx] < @offers[idx].max
+          price = @cur_prices["Buy No"][idx] - 1
+          price = 1 if price == 0
+          @offers[idx] = Offer.new(price, 100 - @cur_prices["Buy Yes"][idx], price)
           return {
             type: :sell,
             shares: :no,
             idx: idx,
-            price: @cur_prices["Buy No"][idx] - 1,
+            price: price,
             quantity: -quantity
           }
         end
@@ -91,7 +99,7 @@ class MarketValues
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
-        if @offers[idx].price < 100 - @cur_prices["Buy Yes"][idx]
+        if @offers[idx].price > 100 - @cur_prices["Buy Yes"][idx]
           return {
             type: :cancel,
             offer: :buy,
