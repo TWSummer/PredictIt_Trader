@@ -135,9 +135,9 @@ class MarketValues
   def no_price_total
     total = 0
     @cur_prices["Buy No"].each do |val|
-      total += 100 - val
+      total += val - 100
     end
-    total
+    total.abs
   end
 
   def update_cur_prices
