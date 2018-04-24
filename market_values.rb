@@ -132,7 +132,7 @@ class MarketValues
   end
 
   def yes_price_total
-    @cur_prices["Buy Yes"].reduce(:+)
+    @cur_prices["Buy Yes"].reduce(:+) - 100
   end
 
   def no_price_total
@@ -140,7 +140,7 @@ class MarketValues
     @cur_prices["Buy No"].each do |val|
       total += val - 100
     end
-    total.abs
+    total + 100
   end
 
   def update_cur_prices
