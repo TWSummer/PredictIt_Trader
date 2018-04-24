@@ -15,9 +15,12 @@ class MarketValues
   end
 
   def suggest_action
-    return irrelevant_offer if irrelevant_offer
-    return sell_shares if sell_shares
-    return buy_shares if buy_shares
+    io = irrelevant_offer
+    return io if io
+    ss = sell_shares
+    return ss if ss
+    bs = buy_shares
+    return bs if bs
     { type: "No Action" }
   end
 

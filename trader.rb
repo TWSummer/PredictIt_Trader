@@ -6,6 +6,7 @@ class Trader
   def initialize
     @driver = Selenium::WebDriver.for :firefox
     @market_values = MarketValues.new(@driver)
+    @market_url = "https://www.predictit.org/Market/4330/How-many-tweets-will-%40potus-post-from-noon-April-20-to-noon-April-27"
   end
 
   def run
@@ -99,7 +100,17 @@ class Trader
   end
 
   def navigate_to_market
-    @driver.navigate.to "https://www.predictit.org/Market/4314/What-will-Trump's-538-job-approval-index-be-for-April-23"
+    @driver.navigate.to @market_url
+    expand
+  end
+
+  def expand
+    sleep(1)
+    begin
+      element = @driver.find_element(id: "showMoreLinkContent")
+      element.click if element
+    rescue
+    end
   end
 end
 
