@@ -6,17 +6,17 @@ class Trader
   def initialize
     @driver = Selenium::WebDriver.for :firefox
     @market_values = MarketValues.new(@driver)
-    @market_url = "https://www.predictit.org/Market/4330/How-many-tweets-will-%40potus-post-from-noon-April-20-to-noon-April-27"
+    @market_url = "https://www.predictit.org/Market/4345/What-will-Democrats'-538-Congressional-polling-edge-be-for-May-2"
   end
 
   def run
     login
     navigate_to_market
-    @market_values.update_prices
+    update_prices
     while true
       # begin
         navigate_to_market
-        @market_values.update_prices
+        update_prices
         action = @market_values.suggest_action
         p action
         perform_action(action)
@@ -102,6 +102,14 @@ class Trader
   def navigate_to_market
     @driver.navigate.to @market_url
     expand
+  end
+
+  def update_prices
+    @market_values.update_prices
+    while @market_values.cur_prices == {}
+      sleep(1)
+      @market_values.update_prices
+    end
   end
 
   def expand
