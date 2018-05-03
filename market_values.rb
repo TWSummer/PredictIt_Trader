@@ -105,6 +105,8 @@ class MarketValues
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
+        p @buy_offers[idx].price
+        p @cur_prices["Buy No"][idx]
         if @buy_offers[idx].price > @cur_prices["Buy No"][idx]
           return {
             type: :cancel,
@@ -129,9 +131,9 @@ class MarketValues
   end
 
   def already_offers?(idx)
-    @cur_prices["Shares"][idx] > 0 ||
-    @cur_prices["Buy Offers"][idx] > 0 ||
-    @cur_prices["Sell Offers"][idx] > 0
+    @cur_prices["Shares"][idx] != 0 ||
+    @cur_prices["Buy Offers"][idx] != 0 ||
+    @cur_prices["Sell Offers"][idx] != 0
   end
 
   def ensure_offers
@@ -194,8 +196,10 @@ class MarketValues
         @cur_prices["Shares"][-1] *= -1 if el.attribute("outerHTML").include?("alert-danger")
       elsif idx % 3 == 1
         @cur_prices["Buy Offers"] = @cur_prices["Buy Offers"].push(el.attribute("innerText").to_i)
+        @cur_prices["Buy Offers"][-1] *= -1 if el.attribute("outerHTML").include?("alert-danger")
       else
         @cur_prices["Sell Offers"] = @cur_prices["Sell Offers"].push(el.attribute("innerText").to_i)
+        @cur_prices["Sell Offers"][-1] *= -1 if el.attribute("outerHTML").include?("alert-offers-red")
       end
     end
   end
