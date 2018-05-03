@@ -70,7 +70,8 @@ class MarketValues
   def sell_shares
     @cur_prices["Shares"].each_with_index do |quantity, idx|
       if quantity > 0
-        if @cur_prices["Buy Yes"][idx] < @buy_offers[idx].max
+        if @cur_prices["Buy Yes"][idx] < @buy_offers[idx].max &&
+          @cur_prices["Sell Offers"][idx] == 0
           price = @cur_prices["Buy Yes"][idx] - 1
           price = 1 if price == 0
           @sell_offers[idx] = Offer.new(price, 100 - @cur_prices["Buy No"][idx], price)
@@ -83,7 +84,8 @@ class MarketValues
           }
         end
       elsif quantity < 0
-        if @cur_prices["Buy No"][idx] < @buy_offers[idx].max
+        if @cur_prices["Buy No"][idx] < @buy_offers[idx].max &&
+          @cur_prices["Sell Offers"][idx] == 0
           price = @cur_prices["Buy No"][idx] - 1
           price = 1 if price == 0
           @sell_offers[idx] = Offer.new(price, 100 - @cur_prices["Buy Yes"][idx], price)
