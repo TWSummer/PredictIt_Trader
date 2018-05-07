@@ -6,7 +6,7 @@ class Trader
   def initialize
     @driver = Selenium::WebDriver.for :firefox
     @market_values = MarketValues.new(@driver)
-    @market_url = "https://www.predictit.org/Market/4362/How-many-tweets-will-%40realDonaldTrump-post-from-noon-May-2-to-noon-May-9"
+    @market_url = "https://www.predictit.org/Market/4376/What-will-Trump's-RCP-average-job-approval-be-at-end-of-day-May-11"
   end
 
   def run
