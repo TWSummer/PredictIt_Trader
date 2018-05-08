@@ -1,11 +1,12 @@
 require "./offer"
 
 class MarketValues
-  PURCHASE_ABOVE_DIFFERENCE = 5
   attr_reader :cur_prices
 
-  def initialize(driver)
+  def initialize(driver, purchase_difference = 5, match_other_bids = false)
     @driver = driver
+    @purchase_above_difference = purchase_difference
+    @match_other_bids = match_other_bids
   end
 
   def update_prices
@@ -39,9 +40,9 @@ class MarketValues
     end
     puts yes_price_total
     puts no_price_total
-    if max_difference > PURCHASE_ABOVE_DIFFERENCE
+    if max_difference > @purchase_above_difference
       if yes_price_total < no_price_total
-        price = 100 - @cur_prices["Buy No"][best_idx] + 1
+        price = 100 - @cur_prices["Buy No"][best_idx] + price_difference
         price = 99 if price == 100
         @buy_offers[best_idx] = Offer.new(price, price, @cur_prices["Buy Yes"][best_idx])
         return {
@@ -52,7 +53,7 @@ class MarketValues
           quantity: 5
         }
       else
-        price = 100 - @cur_prices["Buy Yes"][best_idx] + 1
+        price = 100 - @cur_prices["Buy Yes"][best_idx] + price_difference
         price = 99 if price == 100
         @buy_offers[best_idx] = Offer.new(price, price, @cur_prices["Buy No"][best_idx])
         return {
@@ -72,7 +73,7 @@ class MarketValues
       if quantity > 0
         if @cur_prices["Buy Yes"][idx] < @buy_offers[idx].max &&
           @cur_prices["Sell Offers"][idx] == 0
-          price = @cur_prices["Buy Yes"][idx] - 1
+          price = @cur_prices["Buy Yes"][idx] - price_difference
           price = 1 if price == 0
           @sell_offers[idx] = Offer.new(price, 100 - @cur_prices["Buy No"][idx], price)
           return {
@@ -86,7 +87,7 @@ class MarketValues
       elsif quantity < 0
         if @cur_prices["Buy No"][idx] < @buy_offers[idx].max &&
           @cur_prices["Sell Offers"][idx] == 0
-          price = @cur_prices["Buy No"][idx] - 1
+          price = @cur_prices["Buy No"][idx] - price_difference
           price = 1 if price == 0
           @sell_offers[idx] = Offer.new(price, 100 - @cur_prices["Buy Yes"][idx], price)
           return {
@@ -169,6 +170,10 @@ class MarketValues
       total += val - 100
     end
     total + 100
+  end
+
+  def price_difference
+    @match_other_bids ? 0 : 1
   end
 
   def update_cur_prices
