@@ -38,7 +38,7 @@ class Trader
     col = action[:shares] == :yes ? 3 : 5
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
     element.click
-    sleep(2)
+    sleep_while_spinner
     element = @driver.find_element(id: 'Quantity')
     3.times { element.send_keys "\ue003" }
     element.send_keys action[:quantity]
@@ -48,7 +48,7 @@ class Trader
     button_id = action[:shares] == :no ? "submitSell" : "submitBuy"
     element = @driver.find_element(id: button_id)
     element.click
-    sleep(1)
+    sleep_while_spinner
     element = @driver.find_elements(css: 'button.btn-success')[0]
     element.click
   end
@@ -57,7 +57,7 @@ class Trader
     col = action[:shares] == :yes ? 4 : 6
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) span a")[0]
     element.click
-    sleep(1)
+    sleep_while_spinner
     complete_purchase(action)
   end
 
@@ -71,7 +71,7 @@ class Trader
     button_id = action[:shares] == :no || action[:type] == :sell ? "submitSell" : "submitBuy"
     element = @driver.find_element(id: button_id)
     element.click
-    sleep(1)
+    sleep_while_spinner
     element = @driver.find_elements(css: 'button.btn-success')[0]
     element.click
   end
@@ -80,10 +80,10 @@ class Trader
     col = action[:offer] == :buy ? 8 : 9
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) a")[0]
     element.click
-    sleep(3)
+    sleep_while_spinner
     element = @driver.find_elements(css: "#ownershipmodal a.cancelOrderBook")[0]
     element.click
-    sleep(1)
+    sleep_while_spinner
     @driver.switch_to.alert.accept
   end
 
@@ -104,7 +104,7 @@ class Trader
     while true
       begin
         element = @driver.find_element(id: 'spinnnerGo')
-        p element
+        break if element.attribute("outerHTML").include?("display: none;")
         sleep(1)
       rescue
         break
