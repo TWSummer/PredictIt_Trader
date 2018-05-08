@@ -15,9 +15,7 @@ class Trader
     update_prices
     while true
       # begin
-        p "Navigating"
         navigate_to_market
-        p "Updating"
         update_prices
         action = @market_values.suggest_action
         p action
