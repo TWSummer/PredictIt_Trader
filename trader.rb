@@ -15,7 +15,9 @@ class Trader
     update_prices
     while true
       # begin
+        p "Navigating"
         navigate_to_market
+        p "Updating"
         update_prices
         action = @market_values.suggest_action
         p action
@@ -81,9 +83,11 @@ class Trader
     element = @driver.find_elements(css: "tbody tr:nth-of-type(#{action[:idx] + 1}) td:nth-of-type(#{col}) a")[0]
     element.click
     sleep_while_spinner
+    sleep(0.5)
     element = @driver.find_elements(css: "#ownershipmodal a.cancelOrderBook")[0]
     element.click
-    sleep_while_spinner
+    # sleep_while_spinner
+    sleep(1)
     @driver.switch_to.alert.accept
   end
 
@@ -100,19 +104,31 @@ class Trader
   end
 
   def sleep_while_spinner
-    sleep(0.2)
+    sleep(1)
     while true
       begin
         element = @driver.find_element(id: 'spinnnerGo')
-        break if element.attribute("outerHTML").include?("display: none;")
-        sleep(1)
+        break if element.attribute("outerHTML").include?("display: none")
+        sleep(0.5)
       rescue
         break
       end
     end
   end
 
+  def click_alert_if_present
+    begin
+      element.send_keys:return
+      @driver.switch_to.alert.accept
+    rescue
+    end
+  end
+
   def navigate_to_market
+    sleep_while_spinner
+    sleep(3)
+    sleep_while_spinner
+    click_alert_if_present
     @driver.navigate.to @market_url
     expand
   end

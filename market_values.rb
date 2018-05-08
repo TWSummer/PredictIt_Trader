@@ -105,9 +105,16 @@ class MarketValues
   def irrelevant_offer
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
-        p @buy_offers[idx].price
-        p @cur_prices["Buy No"][idx]
         if @buy_offers[idx].price > @cur_prices["Buy No"][idx]
+          return {
+            type: :cancel,
+            offer: :buy,
+            idx: idx
+          }
+        end
+      end
+      if quantity < 0
+        if @buy_offers[idx].price > 100 - @cur_prices["Buy Yes"][idx]
           return {
             type: :cancel,
             offer: :buy,
@@ -126,6 +133,15 @@ class MarketValues
           }
         end
       end
+      if quantity < 0
+        if @sell_offers[idx].price > 100 - @cur_prices["Buy No"][idx]
+          return {
+            type: :cancel,
+            offer: :sell,
+            idx: idx
+          }
+        end
+      end
     end
     nil
   end
@@ -137,7 +153,7 @@ class MarketValues
   end
 
   def ensure_offers
-    if @cur_prices["Buy Yes"]
+    unless @cur_prices["Buy Yes"].empty?
       @buy_offers ||= Array.new(@cur_prices["Buy Yes"].length) { Offer.new(100, 100, 100) }
       @sell_offers ||= Array.new(@cur_prices["Buy Yes"].length) { Offer.new(100, 100, 100) }
     end
