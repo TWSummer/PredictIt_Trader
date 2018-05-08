@@ -115,9 +115,7 @@ class MarketValues
         end
       end
       if quantity < 0
-        p @buy_offers[idx].price
-        p @cur_prices["Buy Yes"][idx]
-        if @buy_offers[idx].price < 100 - @cur_prices["Buy Yes"][idx]
+        if @buy_offers[idx].price < 100 - @cur_prices["Buy Yes"][idx] || @buy_offers[idx].price == 100
           return {
             type: :cancel,
             offer: :buy,
@@ -137,7 +135,7 @@ class MarketValues
         end
       end
       if quantity < 0
-        if @sell_offers[idx].price < 100 - @cur_prices["Buy No"][idx]
+        if @sell_offers[idx].price < 100 - @cur_prices["Buy No"][idx] || @sell_offers[idx].price == 100
           return {
             type: :cancel,
             offer: :sell,
