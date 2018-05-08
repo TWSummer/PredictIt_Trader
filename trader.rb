@@ -124,8 +124,6 @@ class Trader
 
   def navigate_to_market
     sleep_while_spinner
-    sleep(3)
-    sleep_while_spinner
     click_alert_if_present
     @driver.navigate.to @market_url
     expand
