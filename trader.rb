@@ -96,7 +96,16 @@ class Trader
     element = @driver.find_element(id: 'Password')
     element.send_keys Credentials.password
     element.submit
-    sleep(2)
+    sleep(1)
+    while true
+      begin
+        element = @driver.find_element(id: 'spinnnerGo')
+        p element
+        sleep(1)
+      rescue
+        break
+      end
+    end
   end
 
   def navigate_to_market
