@@ -69,6 +69,20 @@ class MarketValues
   end
 
   def sell_shares
+    result = nil
+    result ||= sell_if_price_dropping
+    result ||= sell_if_penny_difference
+    result
+  end
+
+  def irrelevant_offer
+    result = nil
+    result ||= cancel_if_offer_beaten
+    result ||= cancel_if_insufficient_difference
+    result
+  end
+
+  def sell_if_price_dropping
     @cur_prices["Shares"].each_with_index do |quantity, idx|
       if quantity > 0
         if @cur_prices["Buy Yes"][idx] < @buy_offers[idx].max &&
@@ -103,7 +117,34 @@ class MarketValues
     nil
   end
 
-  def irrelevant_offer
+  def sell_if_penny_difference
+    @cur_prices["Shares"].each_with_index do |quantity, idx|
+      if quantity != 0
+        if @cur_prices["Buy Yes"][idx] - (100 - @cur_prices["Buy No"][idx]) == 1
+          price = quantity > 0 ?
+            @cur_prices["Buy Yes"][idx] - price_difference :
+            @cur_prices["Buy No"][idx] - price_difference
+          return {
+            type: :sell,
+            shares: quantity > 0 ? :yes : :no,
+            idx: idx,
+            price: price,
+            quantity: quantity.abs
+          }
+        end
+      end
+    end
+    nil
+  end
+
+  def cancel_if_offer_beaten
+    result = nil
+    result ||= cancel_buy_if_beaten
+    result ||= cancel_sell_if_beaten
+    result
+  end
+
+  def cancel_buy_if_beaten
     @cur_prices["Buy Offers"].each_with_index do |quantity, idx|
       if quantity > 0
         if @buy_offers[idx].price < 100 - @cur_prices["Buy No"][idx] || @buy_offers[idx].price == 100
@@ -124,6 +165,10 @@ class MarketValues
         end
       end
     end
+    nil
+  end
+
+  def cancel_sell_if_beaten
     @cur_prices["Sell Offers"].each_with_index do |quantity, idx|
       if quantity > 0
         if @sell_offers[idx].price > @cur_prices["Buy Yes"][idx]
@@ -142,6 +187,28 @@ class MarketValues
           return {
             type: :cancel,
             offer: :sell,
+            idx: idx
+          }
+        end
+      end
+    end
+    nil
+  end
+
+  def cancel_if_insufficient_difference
+    result = nil
+    result ||= check_for_insufficient_difference("Buy Offers")
+    result ||= check_for_insufficient_difference("Sell Offers")
+    result
+  end
+
+  def check_for_insufficient_difference(type)
+    @cur_prices[type].each_with_index do |quantity, idx|
+      if quantity != 0
+        if @cur_prices["Buy Yes"][idx] - (100 - @cur_prices["Buy No"][idx]) < @purchase_above_difference
+          return {
+            type: :cancel,
+            offer: type == "Buy Offers" ? :buy : :sell,
             idx: idx
           }
         end
