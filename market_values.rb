@@ -180,9 +180,6 @@ class MarketValues
         end
       end
       if quantity < 0
-        p "Selling No Check"
-        p @sell_offers[idx].price
-        p @cur_prices["Buy No"][idx]
         if @sell_offers[idx].price > @cur_prices["Buy No"][idx]
           return {
             type: :cancel,
@@ -198,7 +195,6 @@ class MarketValues
   def cancel_if_insufficient_difference
     result = nil
     result ||= check_for_insufficient_difference("Buy Offers")
-    result ||= check_for_insufficient_difference("Sell Offers")
     result
   end
 
